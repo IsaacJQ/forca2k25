@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forca Labubônica</title>
+<style>
+  :root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #2d2d44);
+    color: var(--light-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 800px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--warning-color));
+    z-index: 1;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--light-color);
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--light-color);
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 30%;
+    width: 40%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+  }
+  
+  .screen {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .active {
+    display: block;
+  }
+  
+  .menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .btn-warning {
+    background-color: var(--warning-color);
+    color: white;
+  }
+  
+  .btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+  }
+  
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+  
+  .btn:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .player-info {
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .player-name {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  
+  .player-score {
+    font-weight: bold;
+    color: var(--secondary-color);
+  }
+  
+  #word {
+    font-size: 2.5rem;
+    letter-spacing: 10px;
+    margin: 30px 0;
+    font-weight: bold;
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+  
+  #keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+  }
+  
+  #keyboard button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: bold;
+  }
+  
+  #keyboard button:hover:not(:disabled) {
+    background: #2980b9;
+    transform: scale(1.05);
+  }
+  
+  #keyboard button:disabled {
+    cursor: not-allowed;
+  }
+  
+  #keyboard button.correct {
+    background: var(--secondary-color);
+  }
+  
+  #keyboard button.incorrect {
+    background: var(--danger-color);
+  }
+  
+  .game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  
+  #status {
+    margin-top: 20px;
+    font-size: 1.3rem;
+    text-align: center;
+    min-height: 30px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  #hangman {
+    font-family: monospace;
+    white-space: pre;
+    margin: 20px auto;
+    font-size: 1.2rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .game-info {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .info-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 120px;
+    flex: 1;
+    transition: var(--transition);
+  }
+  
+  .info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+  }
+  
+  .info-box h3 {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #bdc3c7;
+  }
+  
+  .info-box p {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  #scoreboard {
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  #scoreboard h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+  }
+  
+  .ranking-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: var(--transition);
+  }
+  
+  .ranking-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .ranking-item:last-child {
+    border-bottom: none;
+  }
+  
+  .ranking-position {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  
+  .hint-section {
+    margin: 15px 0;
+    text-align: center;
+  }
+  
+  .category-badge {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .input-group {
+    margin: 20px 0;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1.1rem;
+    transition: var(--transition);
+  }
+  
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+  }
+  
+  .difficulty-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  
+  .difficulty-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .menu-icon {
+    font-size: 1.2rem;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes confetti {
+    0% { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+  
+  .pulse {
+    animation: pulse 0.5s ease;
+  }
+  
+  .win-animation {
+    animation: pulse 0.5s ease 3;
+    color: var(--secondary-color);
+  }
+  
+  .lose-animation {
+    animation: pulse 0.5s ease 3;
+    color: var(--danger-color);
+  }
+  
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--secondary-color);
+    opacity: 0;
+    z-index: 1000;
+    animation: confetti 3s ease-out forwards;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    #word {
+      font-size: 1.8rem;
+      letter-spacing: 5px;
+      padding: 15px;
+    }
+    
+    #keyboard button {
+      width: 35px;
+      height: 35px;
+      font-size: 1rem;
+    }
+    
+    .game-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .game-controls {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🪢 Forca Labubônica</h1>
+  
+  <!-- Tela de Menu -->
+  <div id="menuScreen" class="screen active">
+    <div class="menu-options">
+      <button class="btn btn-primary" onclick="showScreen('playerScreen')">
+        <span class="menu-icon">🎮</span> Novo Jogo
+      </button>
+      <button class="btn btn-secondary" onclick="showScreen('rankingScreen')">
+        <span class="menu-icon">🏆</span> Ver Ranking
+      </button>
+      <button class="btn btn-warning" onclick="showScreen('instructionsScreen')">
+        <span class="menu-icon">📖</span> Instruções
+      </button>
+    </div>
+    
+    <div style="margin-top: 40px; text-align: center; color: #bdc3c7; font-size: 0.9rem;">
+      <p>Desenvolvido com ❤️ para amantes de jogos de palavras</p>
+    </div>
+  </div>
+  
+  <!-- Tela de Jogador -->
+  <div id="playerScreen" class="screen">
+    <h2>Configurar Jogador</h2>
+    
+    <div class="input-group">
+      <label for="playerNameInput">Nome do Jogador:</label>
+      <input type="text" id="playerNameInput" placeholder="Digite seu nome" maxlength="15">
+    </div>
+    
+    <div class="input-group">
+      <label>Dificuldade:</label>
+      <div class="difficulty-options">
+        <button class="btn btn-secondary difficulty-btn" onclick="setDifficulty('easy')">
+          <span class="menu-icon">😊</span> Fácil
+        </button>
+        <button class="btn btn-primary difficulty-btn" onclick="setDifficulty('medium')">
+          <span class="menu-icon">😐</span> Médio
+        </button>
+        <button class="btn btn-danger difficulty-btn" onclick="setDifficulty('hard')">
+          <span class="menu-icon">😰</span> Difícil
+        </button>
+      </div>
+      <div id="difficultyDescription" style="margin-top: 10px; font-size: 0.9rem; color: #bdc3c7; text-align: center;">
+        Médio: 6 tentativas, 3 dicas
+      </div>
+    </div>
+    
+    <div class="game-controls">
+      <button class="btn btn-primary" onclick="startGame()">
+        <span class="menu-icon">🚀</span> Iniciar Jogo
+      </button>
+      <button class="btn btn-secondary" onclick="showScreen('menuScreen')">
+        <span class="menu-icon">↩️</span> Voltar
+      </button>
+    </div>
+  </div>
+  
+  <!-- Tela de Jogo -->
+  <div id="gameScreen" class="screen">
+    <div class="game-header">
+      <div class="player-info">
+        <div>Jogador: <span class="player-name" id="playerName">-</span></div>
+        <div>Pontos: <span class="player-score" id="score">0</span></div>
+      </div>
+      <div class="category-badge" id="categoryDisplay">Categoria: -</div>
+    </div>
+    
+    <div class="game-info">
+      <div class="info-box">
+        <h3>Tentativas</h3>
+        <p id="attempts">6</p>
+      </div>
+      <div class="info-box">
+        <h3>Dicas</h3>
+        <p id="hints">3</p>
+      </div>
+      <div class="info-box">
+        <h3>Palavras</h3>
+        <p id="wordsCompleted">0</p>
+      </div>
+    </div>
+    
+    <div id="word"></div>
+    
+    <div class="hint-section">
+      <button class="btn btn-warning" id="hintButton" onclick="useHint()">
+        <span class="menu-icon">💡</span> Usar Dica (-5 pontos)
+      </button>
+      <p id="hintText" style="margin-top: 10px; font-style: italic; min-height: 24px;"></p>
+    </div>
+    
+    <div id="keyboard"></div>
+    
+    <div id="status"></div>
+    
+    <pre id="hangman"></pre>
+    
+    <div class="game-controls">
+      <button class="btn btn-primary" id="nextWordButton" onclick="nextWord()" disabled>
+        <span class="menu-icon">⏭️</span> Próxima Palavra
+      </button>
+      <button class="btn btn-secondary" onclick="showScreen('menuScreen'); resetGame();">
+        <span class="menu-icon">🏠</span> Menu Principal
+      </button>
+    </div>
+  </div>
+  
+  <!-- Tela de Ranking -->
+  <div id="rankingScreen" class="screen">
+    <h2>🏆 Ranking de Jogadores</h2>
+    <div id="scoreboard"></div>
+    <div class="game-controls" style="margin-top: 30px;">
+      <button class="btn btn-primary" onclick="showScreen('menuScreen')">
+        <span class="menu-icon">↩️</span> Voltar
+      </button>
+      <button class="btn btn-danger" onclick="clearRanking()">
+        <span class="menu-icon">🗑️</span> Limpar Ranking
+      </button>
+    </div>
+  </div>
+  
+  <!-- Tela de Instruções -->
+  <div id="instructionsScreen" class="screen">
+    <h2>📖 Instruções do Jogo</h2>
+    <div style="margin: 20px 0; line-height: 1.6;">
+      <div class="info-box" style="text-align: left; margin-bottom: 20px;">
+        <p>🎯 <strong>Objetivo:</strong> Adivinhar a palavra secreta antes que o boneco da forca seja completamente desenhado.</p>
+      </div>
+      
+      <div class="info-box" style="text-align: left; margin-bottom: 20px;">
+        <p>⚙️ <strong>Como jogar:</strong></p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>Clique nas letras do teclado para tentar adivinhar a palavra</li>
+          <li>Cada letra errada reduz o número de tentativas</li>
+          <li>Use as dicas para revelar letras difíceis (limite varia com a dificuldade)</li>
+          <li>Complete palavras para ganhar pontos e desbloquear a próxima palavra</li>
+        </ul>
+      </div>
+      
+      <div class="info-box" style="text-align: left;">
+        <p>🏅 <strong>Pontuação:</strong></p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>Letra correta: +2 pontos</li>
+          <li>Palavra completa: +10 pontos</li>
+          <li>Uso de dica: -5 pontos</li>
+          <li>Letra errada: -1 ponto</li>
+        </ul>
+      </div>
+    </div>
+    <div class="game-controls">
+      <button class="btn btn-primary" onclick="showScreen('menuScreen')">
+        <span class="menu-icon">↩️</span> Voltar
+      </button>
+    </div>
+  </div>
+</div>
+
+<audio id="hitSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="missSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/sci_fi_bubble.ogg"></audio>
+<audio id="loseSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_fail_strings.ogg"></audio>
+
+<script>
+// Banco de palavras por categoria
+const palavrasPorCategoria = {
+  tecnologia: [
+    "PROGRAMADOR", "JAVASCRIPT", "COMPUTADOR", "DESENVOLVEDOR", 
+    "PYTHON", "ALGORITMO", "INTERNET", "HTML", "CSS", "REACT",
+    "FUNCIONAL", "VARIÁVEL", "BANCODEDADOS", "FRAMEWORK"
+  ],
+  animais: [
+    "ELEFANTE", "GIRAFA", "TIGRE", "LEOPARDO", "CANGURU",
+    "PINGUIM", "CORUJA", "TUCANO", "GOLFINHO", "TARTARUGA",
+    "ARARA", "BALEIA", "MACACO", "ZEBRA"
+  ],
+  paises: [
+    "BRASIL", "ARGENTINA", "CANADÁ", "JAPÃO", "ALEMANHA",
+    "FRANÇA", "ITALIA", "ESPANHA", "PORTUGAL", "AUSTRALIA",
+    "MÉXICO", "CHILE", "RÚSSIA", "CHINA"
+  ],
+  esportes: [
+    "FUTEBOL", "BASQUETE", "VOLEI", "NATAÇÃO", "TÊNIS",
+    "SURFE", "SKATE", "CICLISMO", "ATLETISMO", "GINÁSTICA",
+    "NATAÇÃO", "JUDÔ", "BOXE", "SINUCA"
+  ],
+  alimentos: [
+    "BANANA", "LARANJA", "CHOCOLATE", "HAMBÚRGUER", "PIZZA",
+    "SORVETE", "QUEIJO", "BISCOITO", "SANDUÍCHE", "SALADA",
+    "MACARRÃO", "PANQUECA", "HAMBURGUER", "SUSHI"
+  ]
+};
+
+const categorias = Object.keys(palavrasPorCategoria);
+
+let palavras = [];
+let palavraSecreta = "";
+let letrasCorretas = [];
+let tentativas = 6;
+let score = 0;
+let jogador = "";
+let dificuldade = "medium";
+let dicasDisponiveis = 3;
+let palavrasCompletadas = 0;
+let jogoAtivo = false;
+let categoriaAtual = "";
+let ranking = JSON.parse(localStorage.getItem("rankingForca")) || [];
+
+const estagiosForca = [
+` 
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========`,
+` 
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========`
+];
+
+// Funções de navegação
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('active');
+  });
+  document.getElementById(screenId).classList.add('active');
+  
+  if (screenId === 'rankingScreen') {
+    mostrarRanking();
+  }
+}
+
+function setDifficulty(level) {
+  dificuldade = level;
+  
+  // Atualizar visual dos botões de dificuldade
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('btn-primary', 'btn-secondary', 'btn-danger');
+    
+    if (btn.textContent.includes('Fácil')) {
+      btn.classList.add('btn-secondary');
+    } else if (btn.textContent.includes('Médio')) {
+      btn.classList.add('btn-primary');
+    } else if (btn.textContent.includes('Difícil')) {
+      btn.classList.add('btn-danger');
+    }
+  });
+  
+  // Destacar o botão selecionado
+  event.target.classList.remove('btn-secondary', 'btn-primary', 'btn-danger');
+  
+  if (level === 'easy') {
+    event.target.classList.add('btn-secondary');
+    document.getElementById('difficultyDescription').textContent = 'Fácil: 8 tentativas, 5 dicas, palavras mais curtas';
+  } else if (level === 'medium') {
+    event.target.classList.add('btn-primary');
+    document.getElementById('difficultyDescription').textContent = 'Médio: 6 tentativas, 3 dicas, palavras médias';
+  } else if (level === 'hard') {
+    event.target.classList.add('btn-danger');
+    document.getElementById('difficultyDescription').textContent = 'Difícil: 4 tentativas, 1 dica, palavras longas';
+  }
+}
+
+function startGame() {
+  jogador = document.getElementById('playerNameInput').value.trim();
+  if (!jogador) {
+    alert("Por favor, digite seu nome!");
+    return;
+  }
+  
+  // Configurar palavras baseado na dificuldade
+  switch(dificuldade) {
+    case 'easy':
+      // Filtrar palavras mais curtas para cada categoria
+      palavras = {};
+      Object.keys(palavrasPorCategoria).forEach(cat => {
+        palavras[cat] = palavrasPorCategoria[cat].filter(palavra => palavra.length <= 7);
+      });
+      tentativas = 8;
+      dicasDisponiveis = 5;
+      break;
+    case 'hard':
+      // Filtrar palavras mais longas para cada categoria
+      palavras = {};
+      Object.keys(palavrasPorCategoria).forEach(cat => {
+        palavras[cat] = palavrasPorCategoria[cat].filter(palavra => palavra.length >= 8);
+      });
+      tentativas = 4;
+      dicasDisponiveis = 1;
+      break;
+    default: // medium
+      // Filtrar palavras de tamanho médio para cada categoria
+      palavras = {};
+      Object.keys(palavrasPorCategoria).forEach(cat => {
+        palavras[cat] = palavrasPorCategoria[cat].filter(palavra => palavra.length >= 6 && palavra.length <= 9);
+      });
+      tentativas = 6;
+      dicasDisponiveis = 3;
+  }
+  
+  document.getElementById('playerName').textContent = jogador;
+  document.getElementById('score').textContent = score;
+  document.getElementById('attempts').textContent = tentativas;
+  document.getElementById('hints').textContent = dicasDisponiveis;
+  document.getElementById('wordsCompleted').textContent = palavrasCompletadas;
+  
+  jogoAtivo = true;
+  showScreen('gameScreen');
+  nextWord();
+}
+
+function nextWord() {
+  if (!jogoAtivo) return;
+  
+  // Selecionar categoria aleatória que tenha palavras disponíveis
+  const categoriasDisponiveis = categorias.filter(cat => 
+    palavras[cat] && palavras[cat].length > 0
+  );
+  
+  if (categoriasDisponiveis.length === 0) {
+    document.getElementById('status').textContent = "🎉 Parabéns! Você completou todas as palavras!";
+    jogoAtivo = false;
+    salvarRanking();
+    return;
+  }
+  
+  categoriaAtual = categoriasDisponiveis[Math.floor(Math.random() * categoriasDisponiveis.length)];
+  const palavrasDaCategoria = palavras[categoriaAtual];
+  
+  // Selecionar palavra aleatória da categoria
+  palavraSecreta = palavrasDaCategoria[Math.floor(Math.random() * palavrasDaCategoria.length)];
+  
+  // Atualizar display da categoria
+  document.getElementById('categoryDisplay').textContent = `Categoria: ${categoriaAtual.charAt(0).toUpperCase() + categoriaAtual.slice(1)}`;
+  
+  letrasCorretas = [];
+  document.getElementById('status').textContent = "";
+  document.getElementById('hintText').textContent = "";
+  document.getElementById('hintButton').disabled = false;
+  document.getElementById('nextWordButton').disabled = true;
+  
+  atualizarPalavra();
+  criarTeclado();
+  atualizarForca();
+}
+
+function atualizarPalavra() {
+  const exibicao = palavraSecreta.split("").map(letra => letrasCorretas.includes(letra) ? letra : "_").join(" ");
+  document.getElementById('word').textContent = exibicao;
+  
+  if (!exibicao.includes("_")) {
+    document.getElementById('status').textContent = "🎉 Você acertou a palavra!";
+    document.getElementById('status').classList.add('win-animation');
+    score += 10;
+    palavrasCompletadas++;
+    document.getElementById('wordsCompleted').textContent = palavrasCompletadas;
+    document.getElementById('winSound').play();
+    document.getElementById('nextWordButton').disabled = false;
+    
+    // Criar efeito de confetti
+    createConfetti();
+    
+    setTimeout(() => {
+      document.getElementById('status').classList.remove('win-animation');
+    }, 1500);
+    
+    desativarTeclado();
+  }
+  
+  document.getElementById('score').textContent = score;
+}
+
+function criarTeclado() {
+  const teclado = document.getElementById('keyboard');
+  teclado.innerHTML = "";
+  
+  for (let i = 65; i <= 90; i++) {
+    const letra = String.fromCharCode(i);
+    const btn = document.createElement('button');
+    btn.textContent = letra;
+    btn.onclick = () => tentativaLetra(letra, btn);
+    teclado.appendChild(btn);
+  }
+}
+
+function tentativaLetra(letra, botao) {
+  if (!jogoAtivo) return;
+  
+  botao.disabled = true;
+  
+  if (palavraSecreta.includes(letra)) {
+    letrasCorretas.push(letra);
+    botao.classList.add('correct');
+    document.getElementById('hitSound').play();
+    score += 2;
+    atualizarPalavra();
+  } else {
+    tentativas--;
+    botao.classList.add('incorrect');
+    document.getElementById('missSound').play();
+    score = Math.max(0, score - 1);
+    atualizarForca();
+    
+    if (tentativas === 0) {
+      document.getElementById('status').textContent = "💀 Você perdeu! A palavra era: " + palavraSecreta;
+      document.getElementById('status').classList.add('lose-animation');
+      document.getElementById('loseSound').play();
+      setTimeout(() => {
+        document.getElementById('status').classList.remove('lose-animation');
+      }, 1500);
+      desativarTeclado();
+      jogoAtivo = false;
+      salvarRanking();
+    }
+  }
+  
+  document.getElementById('attempts').textContent = tentativas;
+  document.getElementById('score').textContent = score;
+}
+
+function useHint() {
+  if (!jogoAtivo || dicasDisponiveis <= 0) {
+    alert("Você não tem mais dicas disponíveis!");
+    return;
+  }
+  
+  // Encontrar uma letra que ainda não foi descoberta
+  const letrasNaoDescobertas = palavraSecreta.split('').filter((letra, index) => 
+    !letrasCorretas.includes(letra) && 
+    palavraSecreta.indexOf(letra) === index // Evitar duplicatas
+  );
+  
+  if (letrasNaoDescobertas.length > 0) {
+    const letraDica = letrasNaoDescobertas[Math.floor(Math.random() * letrasNaoDescobertas.length)];
+    letrasCorretas.push(letraDica);
+    
+    // Atualizar o botão da letra revelada
+    document.querySelectorAll('#keyboard button').forEach(btn => {
+      if (btn.textContent === letraDica) {
+        btn.disabled = true;
+        btn.classList.add('correct');
+      }
+    });
+    
+    dicasDisponiveis--;
+    score = Math.max(0, score - 5);
+    document.getElementById('hints').textContent = dicasDisponiveis;
+    document.getElementById('score').textContent = score;
+    document.getElementById('hintText').textContent = `Dica: A palavra contém a letra "${letraDica}"`;
+    document.getElementById('hitSound').play();
+    
+    if (dicasDisponiveis <= 0) {
+      document.getElementById('hintButton').disabled = true;
+    }
+    
+    atualizarPalavra();
+  } else {
+    document.getElementById('hintText').textContent = "Não há mais letras para revelar!";
+  }
+}
+
+function atualizarForca() {
+  document.getElementById('hangman').textContent = estagiosForca[6 - tentativas];
+}
+
+function desativarTeclado() {
+  document.querySelectorAll('#keyboard button').forEach(btn => btn.disabled = true);
+}
+
+function salvarRanking() {
+  // Verificar se o jogador já está no ranking
+  const index = ranking.findIndex(item => item.nome === jogador);
+  
+  if (index !== -1) {
+    // Atualizar pontuação se for maior
+    if (score > ranking[index].pontos) {
+      ranking[index].pontos = score;
+      ranking[index].data = new Date().toLocaleDateString();
+    }
+  } else {
+    // Adicionar novo jogador
+    ranking.push({ 
+      nome: jogador, 
+      pontos: score,
+      data: new Date().toLocaleDateString()
+    });
+  }
+  
+  // Ordenar e limitar a 10 melhores
+  ranking.sort((a, b) => b.pontos - a.pontos);
+  ranking = ranking.slice(0, 10);
+  localStorage.setItem('rankingForca', JSON.stringify(ranking));
+}
+
+function mostrarRanking() {
+  const div = document.getElementById('scoreboard');
+  div.innerHTML = "";
+  
+  if (ranking.length === 0) {
+    div.innerHTML = "<p style='text-align: center; padding: 20px;'>Nenhum recorde ainda!<br>Jogue para ser o primeiro!</p>";
+    return;
+  }
+  
+  ranking.forEach((r, i) => {
+    const item = document.createElement('div');
+    item.className = 'ranking-item';
+    item.innerHTML = `
+      <div>
+        <span class="ranking-position">${i+1}º</span> ${r.nome}
+        ${i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : ''}
+      </div>
+      <div>${r.pontos} pontos<br><small>${r.data || ''}</small></div>
+    `;
+    div.appendChild(item);
+  });
+}
+
+function clearRanking() {
+  if (confirm("Tem certeza que deseja limpar todo o ranking? Esta ação não pode ser desfeita.")) {
+    ranking = [];
+    localStorage.setItem('rankingForca', JSON.stringify(ranking));
+    mostrarRanking();
+  }
+}
+
+function resetGame() {
+  jogoAtivo = false;
+  score = 0;
+  palavrasCompletadas = 0;
+  document.getElementById('playerNameInput').value = '';
+  setDifficulty('medium');
+}
+
+function createConfetti() {
+  const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6'];
+  const container = document.querySelector('.container');
+  
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.top = '-10px';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = Math.random() * 10 + 5 + 'px';
+    confetti.style.height = Math.random() * 10 + 5 + 'px';
+    confetti.style.animationDelay = Math.random() * 2 + 's';
+    
+    container.appendChild(confetti);
+    
+    setTimeout(() => {
+      confetti.remove();
+    }, 3000);
+  }
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+  mostrarRanking();
+  setDifficulty('medium');
+  
+  // Permitir enviar o formulário com Enter
+  document.getElementById('playerNameInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      startGame();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
